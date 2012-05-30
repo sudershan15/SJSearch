@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<project name='SJSUSearch' default='help' basedir='.'>
+
+	<!-- ========================================= -->
+
+	<target name='help'>
+		<echo>
+			Requires:
+				1. Axis2 (built against v1.5.x)
+				2. Tomcat (1.6.x)
+			
+			Build Notes:
+				1. Build server and deploy before building the client as
+				   it depends on the service (.aar) for the WSDL.
+				2. Modify properties axis2.home, tomcat.home, and wsdl to 
+				   your environment.
+				3. Redeploying the service requires you to restart tomcat 
+				   (hot deploy is not enabled)
+			
+			Primary Targets:
+				1. Server: aar deploy
+				2. Client: compile.client demo
+		</echo>
+	</target>
+
+	<!-- ========================================= -->
+
+	<target name='init'>
+		<property name='resources.dir' value='${basedir}/resources' />
+		<property name='build.dir' value='${basedir}/build' />
+		<property name='service.aar' value='${build.dir}/SearchOperationService.aar' />
+
+		<property name='wsdl' value='resources/SearchOperationService.wsdl' />
+
+		<!-- installation specific -->
+		<property name='axis2.home' value='C:/axis2-1.6.0' />
+		<!-- <property name='junit.jar' value='/Users/gisripa/Apps/junit-4.8.1.jar' /> -->
+		<property name='tomcat.home' value='C:/apache-tomcat-7.0.22' />
+		<property name='cassandra.home' value='C:/apache-cassandra-1.0.9' />
+		<property name='hector.home' value='C:/hector-jars' />
+		<path id='build.classpath'>
+			<pathelement location='${basedir}/classes' />
+			<pathelement location='${build.dir}/service' />
+			<pathelement location='${build.dir}/generated/classes' />
+			<!-- <pathelement location='${junit.jar}' /> -->
+			<fileset dir='${axis2.home}/lib'>
+				<include name='**/*.jar' />
+			</fileset>
+			<fileset dir='${cassandra.home}/lib'>
+							<include name='**/*.jar' />
+						</fileset>
+						<fileset dir='${hector.home}/lib'>
+							<include name='**/*.jar' />
+						</fileset>
+		</path>
+	</target>
+
+	<!-- ========================================= -->
+
+	<target name='clean' depends='init'>
+		<delete dir='${build.dir}' />
+		<delete dir='${basedir}/classes' />
+		<mkdir dir='${basedir}/classes' />
+	</target>
+
+	<!-- ========================================= -->
+
+	<target name='all' depends='clean,aar,wsdl,compile.wsdl'>
+		<echo>Deployment to tomcat is separate: ant deploy</echo>
+	</target>
+
+	<!-- ========================================= -->
+	
+	<target name='compile.service' depends='init'>
+		<mkdir dir='${build.dir}/service' />
+		<javac debug='on' fork='true' destdir='${build.dir}/service' srcdir='${basedir}/src' classpathref='build.classpath'>
+		</javac>
+	</target>
+
+	<!-- ========================================= -->
+	<!-- see http://ws.apache.org/axis2/tools/1_4/CodegenToolReference.html -->
+
+	<target name="wsdl" depends='init'>
+		<delete dir='${build.dir}/generated' />
+		<mkdir dir='${build.dir}/generated' />
+		<mkdir dir='${build.dir}/generated/classes' />
+		<!-- <copy todir='${build.dir}/generated/classes' file='${basedir}/resources/log4j.properties' /> -->
+		<java classname="org.apache.axis2.wsdl.WSDL2Java">
+			<arg value="-uri" />
+			<arg value="${wsdl}" />
+			<arg value="-ss" />
+			<arg value="-ssi" />
+			<arg value="-g" />
+			<arg value="-s" />
+			<!-- <arg value="-t" /> -->
+			<arg value="-sd" />
+			<arg value="-p" />
+			<arg value="edu.shim.ws" />
+			<arg value="-o" />
+			<arg value="${build.dir}/generated" />
+			<arg value="-f" />
+			<classpath refid="build.classpath" />
+		</java>
+	</target>
+
+	<!-- ========================================= -->
+
+	<target name='compile.wsdl' depends='init'>
+		<mkdir dir='${build.dir}/generated/classes' />
+		<javac debug='on' fork='true' destdir='${build.dir}/generated/classes' srcdir='${build.dir}/generated' classpathref='build.classpath'>
+		</javac>
+	</target>
+
+	<target name='compile.demo' depends='init'>
+		<javac debug='on' fork='true' destdir='${basedir}/classes' srcdir='${basedir}/src' classpathref='build.classpath'>
+		</javac>
+	</target>
+
+	<!-- ========================================= -->
+
+	<target name='aar' depends='compile.wsdl'>
+
+		<!--
+		<copy todir='${build.dir}/service'>
+			<fileset dir='${basedir}/resources'>
+				<include name='**/*' />
+			</fileset>
+		</copy>
+		-->
+
+		<!-- Copying generated classes from wsdl2java to service folder -->
+		<copy todir='${build.dir}/service'>
+			<fileset dir='${build.dir}/generated/classes'>
+				<include name='**/*' />
+			</fileset>
+		</copy>
+
+		<!--Copying our server implementation from basedir/classes Not required unless
+		there are Classes compiled into the classes folder -->
+		<copy todir='${build.dir}/service'>
+			<fileset dir='${basedir}/classes'>
+				<include name='**/*' />
+			</fileset>
+		</copy>
+		
+		<!-- META-INF folder should contain services.xml (generated from wsdl2java)
+		and WSDL file. These are referred by the Axis when .aar file is deployed -->
+		<mkdir dir='${build.dir}/service/META-INF' />
+		<copy todir='${build.dir}/service/META-INF' file='${build.dir}/generated/services.xml' />
+		<copy todir='${build.dir}/service/META-INF' file='${build.dir}/generated/SearchOperationService.wsdl' />
+
+		<!-- override the services.xml with the correct implementation of the service 
+		The default generated Skeleton is referred in the services.xml,It should be replaced
+		with our server implementation. ANT provides flexibility to replace tokens -->
+		<replace file="${build.dir}/service/META-INF/services.xml" token="SearchOperationServiceSkeleton" value="SearchOperationService" />
+		
+		<!-- ANT task for building a JAR file -->
+		<jar compress='false' filesonly='true' destfile='${service.aar}'>
+			<fileset dir='${build.dir}/service'>
+				<include name='**/*' />
+			</fileset>
+		</jar>
+	</target>
+
+	<!-- ========================================= -->
+
+	<target name='deploy' depends='aar'>
+		<copy todir='${tomcat.home}/webapps/axis2/WEB-INF/services' file='${service.aar}' />
+	</target>
+
+
+	<!-- ========================================= -->
+	<target name='demo' depends='compile.demo'>
+			<java fork='yes' maxmemory='512m' classname='edu.shim.ws.SearchOperationService'>
+				<classpath refid='build.classpath' />
+			</java>
+		</target>
+	 
+
+</project>

@@ -1,0 +1,312 @@
+* {
+margin: 0;
+padding: 0;
+}
+
+ 
+header, footer, section, aside, nav, article 
+{
+display: block;
+}
+
+body {
+line-height: 1;
+
+color: #555;
+font-family: 'CrimsonTextRoman', Garamond, Georgia, Times, 'Times New Roman', serif;
+font-size: 14px;
+}
+	
+ 
+
+#wrapper {
+width: 940px;
+margin: 0 auto;
+}
+
+header {
+
+margin-top: 10px;
+}
+
+#main {
+margin: 0 auto;
+color: #444;
+font-size: 16px;
+line-height: 1.2em;
+}
+
+footer {
+background: #534;
+padding: 0 20px;
+color: #fff;
+clear: both;
+margin: 40px 0;
+/* curved border radius */
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+}
+
+/* basics */
+
+@font-face {
+	font-family: 'CrimsonTextRoman';
+	src: url('crimson_text_roman-webfont.eot');
+	src: local('CrimsonTextRoman'), url('crimson_text_roman-webfont.woff') format('woff'), url('crimson_text_roman-webfont.ttf') format('truetype'), url('crimson_text_roman-webfont.svg#webfontCjgjGITP') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+
+h1,h2,h3,h4,h5,h6 {
+font-weight: bold;
+clear: both;
+color:#000;
+}
+
+a {
+color:#555;
+}
+
+a:hover {
+color: #555;
+}
+	
+p {
+margin-bottom: 18px;
+}
+
+li {
+padding-left: 5px;
+}
+
+hr {
+margin: 0 0 20px 0;
+}
+
+/* nav */
+
+nav .menu {
+background: #534;
+width: 940px;
+float: right;
+font-size: 16px;
+font-weight: bold;
+/* curved border radius */
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+}
+
+nav .menu ul {
+list-style: none;
+margin: 0;
+text-align: center;
+}
+
+nav .menu li {
+display: inline;
+position: relative;
+}
+
+nav .menu a {
+color: #ddd;
+padding: 0 15px;
+line-height: 38px;
+text-decoration: none;
+}
+
+nav .menu a:hover {
+text-decoration: underline;
+}
+
+/* header */
+
+header h1 {
+float: left;
+width: 940px;
+font-size: 32px;
+line-height: 36px;
+border-bottom: 4px solid #555;
+margin: 20px 0;
+}
+
+header h1 a {
+color: #543;
+font-weight: bold;
+text-decoration: none;
+}
+
+/* greeting */
+
+#greeting {
+margin: 10px 0 80px 0;
+}
+
+#greeting h2 {
+display: inline;
+font-size: 26px;
+}
+
+#greeting p {
+font-size: 18px;
+}
+
+#greeting img {
+border: none;
+/* curved border radius */
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+-webkit-box-shadow: 3px 3px 7px #777;
+-moz-box-shadow: 3px 3px 7px #777;
+}
+#infoboxleft  img {
+border: none;
+/* curved border radius */
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+-webkit-box-shadow: 3px 3px 7px #777;
+-moz-box-shadow: 3px 3px 7px #777;
+}
+#infoboxright  img {
+border: none;
+/* curved border radius */
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+-webkit-box-shadow: 3px 3px 7px #777;
+-moz-box-shadow: 3px 3px 7px #777;
+}
+
+#search_box_label{
+	text-align:left;
+	font: bold 20px western;
+	color: White;
+}
+#search_label{
+	font:bold 16px western;
+	color:black;
+}
+#search_box{
+	
+	-moz-border-radius: 5px; 
+  -webkit-border-radius: 5px; 
+  border: 1px solid #cyan; 
+  width:880px;
+  margin-top:40px;
+  margin-left:30px;
+  /*background:#817339;	*/
+}
+#search_mat{
+	margin-left: 80px;
+}
+
+.learnmore {
+display: block;
+background-color: #333;
+padding: 5px 10px;
+float: right;
+/* curved border radius */
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+}
+
+.learnmore a {
+color: #ddd;
+font-size: 16px;
+font-weight: bold;
+text-decoration: none;
+}
+
+/* main content */
+
+#main h1, h2, h3, h4, h5, h6 {
+color: #555;
+margin: 0 0 20px 0;
+line-height: 1.5em;
+}
+
+#main h3 {
+border-bottom: 1px #555 solid;
+font-size: 20px;
+}
+
+#infoboxleft {
+float: left;
+width: 280px;
+}
+
+#infoboxmid {
+float: left;
+width: 280px;
+margin-left: 60px;
+}
+
+#infoboxright {
+float: left;
+width: 280px;
+margin-left: 10px;
+}
+
+blockquote {
+padding-left: 40px;
+background: transparent url(images/openquotes.png) no-repeat;
+font-style: italic;
+}
+
+#contentsummary {
+margin-top: 20px;
+float: left;
+width: 940px;
+}
+
+.alignleft,
+img.alignleft {
+display: inline;
+float: left;
+margin-right: 24px;
+margin-top: 4px;
+}
+
+.alignright,
+img.alignright {
+display: inline;
+float: right;
+margin-left: 24px;
+margin-top: 4px;
+}
+
+.aligncenter,
+img.aligncenter {
+clear: both;
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+
+img.alignleft, img.alignright, img.aligncenter {
+margin-bottom: 12px;
+}
+
+/* footer */
+
+footer p {
+text-align: right;
+padding-right: 20px;
+}
+
+footer a {
+color: #555;
+}
+
+footer a:hover {
+color: #FFF;
+text-decoration: none;
+}
+
+footer a:link, footer a:visited {
+color: #FFF;
+}
+
+.clearall {
+clear: both;
+}
+

@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<project name='SJSUSearchClient' default='help' basedir='.'>
+<target name='help'>
+		<echo>
+			Generating Client from WSDL file
+		</echo>
+	</target>
+	<target name='init'>
+			<property name='resources.dir' value='${basedir}/resources' />
+			<property name='build.dir' value='${basedir}/build' />
+			<property name='wsdl' value='resources/SearchOperationService.wsdl' />
+
+			<!-- installation specific -->
+			<property name='axis2.home' value='C:/axis2-1.6.0' />
+		<property name='tomcat.home' value='C:/apache-tomcat-7.0.22' />
+		<property name='cassandra.home' value='C:/apache-cassandra-1.0.9' />
+		<property name='hector.home' value='C:/hector-jars' />
+			<path id='build.classpath'>
+				<pathelement location='${basedir}/classes' />
+				<pathelement location='${build.dir}/service' />
+				<pathelement location='${build.dir}/generated/classes' />
+				<!-- <pathelement location='${junit.jar}' /> -->
+				<fileset dir="${axis2.home}/lib">
+					<include name="**/*.jar" />
+				</fileset>
+				<fileset dir="${tomcat.home}/lib">
+				            <include name="*.jar" />
+				        </fileset>
+				 
+
+				       
+			</path>
+		</target>
+
+	<target name='clean' depends='init'>
+		<delete dir='${build.dir}' />
+		<delete dir='${basedir}/classes' />
+		<mkdir dir='${basedir}/classes' />
+	</target>
+	<target name="wsdl" depends='init'>
+			<delete dir='${build.dir}/generated' />
+			<mkdir dir='${build.dir}/generated' />
+			<mkdir dir='${build.dir}/generated/classes' />
+			<!-- <copy todir='${build.dir}/generated/classes' file='${basedir}/resources/log4j.properties' /> -->
+			<java classname="org.apache.axis2.wsdl.WSDL2Java">
+				<arg value="-uri" />
+				<arg value="${wsdl}" />
+				<arg value="-s" />
+				<!-- <arg value="-t" /> -->
+				<arg value="-p" />
+				<arg value="edu.shim.ws" />
+				<arg value="-o" />
+				<arg value="${build.dir}/generated" />
+				<arg value="-f" />
+				<classpath refid="build.classpath" />
+			</java>
+		</target>
+	<target name='compile.wsdl' depends='init'>
+			<mkdir dir='${build.dir}/generated/classes' />
+			<javac debug='on' fork='true' destdir='${build.dir}/generated/classes' srcdir='${build.dir}/generated' classpathref='build.classpath'>
+			</javac>
+		</target>
+
+		<target name='compile.demo' depends='compile.wsdl'>
+			<javac debug='on' fork='true' destdir='${basedir}/classes' srcdir='${basedir}/src' classpathref='build.classpath'>
+			</javac>
+		</target>
+
+		<!-- ========================================= -->
+
+		
+
+		<target name='demo' depends='compile.demo'>
+			<java fork='yes' maxmemory='512m' classname='edu.shim.ws.SearchWSClient'>
+				<classpath refid='build.classpath' />
+			</java>
+			<javac srcdir="${basedir}/src" destdir="${build.dir}">
+						            <include name="${compiled.servlet}.java" />
+						            <classpath refid="build.classpath "/>
+						        </javac>
+		</target>
+
+	</project>
